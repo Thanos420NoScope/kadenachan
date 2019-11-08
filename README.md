@@ -1,2 +1,2 @@
 # kadenachan
-A helpful bot
+A helpful bot (courtesy of @alexknvl)
