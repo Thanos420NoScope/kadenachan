@@ -31,36 +31,15 @@ logger.addHandler(handler)
 # These nodes were THE ONLY properly working nodes on 10/08/2019 (properly
 # configured with a certificate). Giving them some credit here.
 BIGCHUNGA = [
-    ('kadena1.block77.io', 443),
-    ('kadena1.dzy.lv', 443),
-    ('kadena1.banteg.xyz', 1337),
-    ('kadena2.banteg.xyz', 1337),
-    ('kadena420.taonacoin.com', 443),
-    ('kadena69.taonacoin.com', 443),
-
-    ('brudda.bigchungusmining.energy', 443),
-    ('bigchungusmining.energy', 31337),
-    ('bigchungusmining.energy', 31336),
-    ('bigchungusmining.energy', 31335),
-    ('bigchungusmining.energy', 31334),
-    ('bigchungusmining.energy', 31333),
-    ('bigchungusmining.energy', 31332),
-    ('bigchungusmining.energy', 31331),
-    ('bigchungusmining.energy', 31330),
+    ('us1.testnet.chainweb.com', 443),
+    ('us2.testnet.chainweb.com', 443),
+    ('eu1.testnet.chainweb.com', 443),
+    ('eu2.testnet.chainweb.com', 443),
                 ]
 
 BOOTSTRAPS = [
-    ('jp1.chainweb.com', 443),
-    ('jp2.chainweb.com', 443),
-    ('jp3.chainweb.com', 443),
-    ('fr1.chainweb.com', 443),
-    ('fr2.chainweb.com', 443),
-    ('fr3.chainweb.com', 443),
-('us-e1.chainweb.com', 443),
-    ('us-e2.chainweb.com', 443),
-    ('us-e3.chainweb.com', 443),
-    ('us-w1.chainweb.com', 443),
-    ('us-w2.chainweb.com', 443),
+    ('ap1.testnet.chainweb.com', 443),
+    ('ap2.testnet.chainweb.com', 443),
 ]
 async def get_peer_list(loop):
     for it in range(5):
@@ -68,7 +47,7 @@ async def get_peer_list(loop):
             host, port = BOOTSTRAPS[random.randint(1, len(BOOTSTRAPS)) - 1]
             print('get_peer_list', host, port)
             future = loop.run_in_executor(None,
-                lambda: requests.get('https://%s:%s/chainweb/0.0/mainnet01/cut/peer' % (host, port), verify=False).json())
+                lambda: requests.get('https://%s:%s/chainweb/0.0/testnet04/cut/peer' % (host, port), verify=False).json())
             resp = await future
             items = resp['items']
             items = [(host['address']['hostname'], host['address']['port']) for host in items]
@@ -84,7 +63,7 @@ async def get_peer_height(loop, host, port):
     try:
         print('get_peer_height', host, port)
         future = loop.run_in_executor(None,
-            lambda: requests.get('https://%s:%s/chainweb/0.0/mainnet01/cut/' % (host, port),
+            lambda: requests.get('https://%s:%s/chainweb/0.0/testnet04/cut/' % (host, port),
                         verify=False, timeout=15))
         resp = await future
         resp = resp.json()
@@ -104,7 +83,7 @@ async def get_peer_coordinator(loop, host, port):
         print('get_peer_coordinator', host, port)
         future = loop.run_in_executor(None,
             lambda: requests.get(
-                'https://%s:%s/chainweb/0.0/mainnet01/mining/work?chain=0' % (host, port),
+                'https://%s:%s/chainweb/0.0/testnet04/mining/work?chain=0' % (host, port),
                 json={
                     'account': '1caecd6adeb2c2f8373e1d5d026d3a20c4b4448e95e8909d11772bdc72cd6d6f',
                     'public-keys': ["1caecd6adeb2c2f8373e1d5d026d3a20c4b4448e95e8909d11772bdc72cd6d6f"],
@@ -122,7 +101,7 @@ async def get_peer_coordinator(loop, host, port):
 def generate_account_balance_request(account_name):
     with open('./tmp-request.yaml', 'wt+') as fout:
         fout.write("""
-code: (coin.details "%s")
+code: (free.anedak-token.details "%s")
 publicMeta:
   chainId: "-1"
   sender: "c18fa7134a3d5f7c0d2f965e7a3510d634d832e8c70293866bf983df443a9b57"
@@ -130,7 +109,7 @@ publicMeta:
   gasPrice: 0.01
   ttl: 100000
   creationTime: 0
-networkId: "mainnet01"
+networkId: "testnet04"
 keyPairs:
   - public: c18fa7134a3d5f7c0d2f965e7a3510d634d832e8c70293866bf983df443a9b57
     secret: a1b6db27d30d7a1c8505fdaf0efedd9c1facc135811bdaf3b544be9fd2a6e0b3
@@ -155,7 +134,7 @@ async def get_balance(loop, account_name, top_servers):
             for chain in range(0, 10):
                 future = loop.run_in_executor(None,
                     lambda: requests.post(
-                        url='https://%s:%s/chainweb/0.0/mainnet01/chain/%s/pact/api/v1/local' % (host, port, chain),
+                        url='https://%s:%s/chainweb/0.0/testnet04/chain/%s/pact/api/v1/local' % (host, port, chain),
                         json=req, verify=False, timeout=20))
                 resp = await future
                 js = resp.json()['result']
